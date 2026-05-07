@@ -1,90 +1,50 @@
-# Flowryd Deal Room — FLOW-009 Tokenised MMF
+# Architecture for Standards
 
-**Flowryd OS** · Confidential · Not for distribution
+A navigable map of taxonomies, rules and reference patterns across the asset lifecycle for primary capital markets.
 
----
-
-## Overview
-
-Interactive Deal Room for **FLOW-009 — Tokenised MMF**, built on the canonical FlowrydOS architecture.
-
-Two sections:
-
-1. **Workflow · Standards Alignment** — 8-step issuance sequence mapped to DAS Interop (ALP), ICMA BDT v1.2, SEC/CFTC taxonomy (Release 33-11412, March 2026), and Canton CIPs
-2. **Transaction Volume Model** — Interactive calculator for primary issuance (FLOW-009) and secondary market activity (trading, collateral reuse, FLOW-001 intraday repo)
+**Working draft** for ICMA PMIP NextGen — Cross-cutting Workstream III.
 
 ---
 
-## Stack
+## About
 
-- Single-file static HTML — no dependencies, no build step
-- Fonts loaded from Google Fonts (IBM Plex Mono · Libre Franklin)
-- Password-gated on load
-- Deployable to Vercel, Netlify, or any static host
+Standards in primary markets are distributed across data taxonomies, legal master agreements, regulatory frameworks, operational conventions and technology specifications — owned and maintained by different communities. None is sufficient on its own; none is in conflict with the others. What the industry has lacked is a navigable map showing how they fit together.
 
----
+This artefact places the asset lifecycle on one axis (issuance, lifecycle servicing, and leverage and collateralisation) and the standards stack on the other (data, legal, regulatory, operational, technology). Each cell contains the taxonomies, rules and reference workflows that apply at that intersection, with explicit reference to the bodies that maintain them.
 
-## Repo structure
-
-```
-/
-├── index.html       # Deal Room — password-gated, self-contained
-├── vercel.json      # Vercel static deployment config
-└── README.md
-```
+The intent is not to prescribe a single set of choices for the market, but to give participants a shared mental model for locating the standards that apply to their role and the gaps that remain to be closed through industry collaboration.
 
 ---
 
-## Deploy to Vercel
+## Author
 
-### One-click (recommended)
-
-Push this repo to GitHub, then import at [vercel.com/new](https://vercel.com/new). No configuration needed — Vercel detects static HTML automatically.
-
-### CLI
-
-```bash
-npm i -g vercel
-vercel --prod
-```
+**Liz Towler** — Founder, Flowryd · Executive in Residence, Global Digital Finance
 
 ---
 
-## Standards reference
+## Status
 
-| Standard | Scope | Source |
-|---|---|---|
-| DAS Interop (ALP) | Asset Lifecycle & Movement, Assets & Liabilities, Ownership Recognition, Legal & Regulatory Compliance | DTCC · Clearstream · Euroclear · BCG (March 2026) |
-| ICMA BDT v1.2 | Party · Instrument · Pricing · Legal | ICMA PMIP |
-| SEC/CFTC Release 33-11412 | Digital Securities · Digital Tools · Stablecoins · Digital Commodities | SEC/CFTC (March 2026) |
-| CIP-56 | Canton token standard | Canton Network |
-| CIP-0103 | dApp-to-wallet connectivity | Canton Network |
+Version 0.1 — working draft, open for comment and refinement.
 
 ---
 
-## Flow architecture
+## Viewing
 
-```
-Functions → Flows → Accelerators → Code
-```
+Open `index.html` in any modern browser, or visit the deployed URL.
 
-- **FLOW-009** (Tokenised MMF) — 8 steps · Status: DESIGN · Target: ACCELERATOR post-MVP
-- **FLOW-001** (Intraday Repo) — activated at FLOW-009 Step 8 (Collateral Agent)
+The print stylesheet auto-generates a full reference appendix when printed — every cell expanded, page-broken cleanly. The interactive HTML and the printed PDF reference are the same artefact.
 
 ---
 
-## Transaction model methodology
+## Structure
 
-| Input | Calculation |
-|---|---|
-| Subscriptions / day | `× steps per transaction` (4–8 Canton ledger commits per FLOW-009 cycle) |
-| Redemptions / day | `× 2` (registry update + cash release) |
-| Secondary trades / day | `× 1` (atomic Canton transfer) |
-| Collateral reuse velocity | `trades × reuse multiplier` (GDF sandbox: 2–3x intraday) |
-| Repo settlements / day | `× 8` (FLOW-001 step count per settlement cycle) |
-
-All inputs are indicative. Refinement required once fund details are confirmed.
+- `index.html` — single self-contained file, no external dependencies, no build step
+- Light/dark mode automatic
+- Mobile responsive
+- Keyboard accessible
 
 ---
 
-*Built on FlowrydOS canonical model · Canton Network · Mainnet*
+## Comment and refinement
+
+Feedback welcome on cell content, attribution, and structural framing. The architecture is intended to evolve through industry input — particularly on the lifecycle and leverage rows, where the standards landscape is most actively changing.

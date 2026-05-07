@@ -3,635 +3,705 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flowryd Deal Room — FLOW-009 Tokenised MMF</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Libre+Franklin:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>Architecture for Standards — A navigable map of primary market taxonomies, rules and reference patterns</title>
+<meta name="description" content="A working map of the standards architecture across the asset lifecycle — data, legal, regulatory, operational and technology layers across issuance, lifecycle and leverage stages.">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  /* ── PASSWORD GATE ── */
-  #gate {
-    position: fixed; inset: 0; background: #0b0f14;
-    display: flex; align-items: center; justify-content: center;
-    z-index: 9999; flex-direction: column; gap: 0;
-  }
-  #gate.hidden { display: none; }
-  .gate-inner { width: 100%; max-width: 360px; padding: 0 24px; }
-  .gate-wordmark { font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500; letter-spacing: 0.08em; color: #00c4a4; margin-bottom: 40px; }
-  .gate-wordmark span { color: #4a5a6a; font-weight: 300; }
-  .gate-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: #4a5a6a; margin-bottom: 10px; }
-  .gate-input {
-    width: 100%; background: #111720; border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 4px; padding: 11px 14px; font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px; color: #e8edf2; outline: none; letter-spacing: 0.04em;
-    transition: border-color 0.2s;
-  }
-  .gate-input:focus { border-color: rgba(0,196,164,0.4); }
-  .gate-input.error { border-color: rgba(248,113,113,0.5); }
-  .gate-btn {
-    width: 100%; margin-top: 10px; padding: 11px; background: #00c4a4;
-    border: none; border-radius: 4px; font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px; font-weight: 500; letter-spacing: 0.1em; color: #0b0f14;
-    cursor: pointer; transition: opacity 0.2s;
-  }
-  .gate-btn:hover { opacity: 0.85; }
-  .gate-err { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #f87171; margin-top: 8px; min-height: 16px; }
-
+:root {
+  --bg: #fafafa;
+  --surface: #ffffff;
+  --surface-alt: #f4f4f5;
+  --border: #e5e5e5;
+  --border-strong: #d4d4d8;
+  --text: #18181b;
+  --text-secondary: #52525b;
+  --text-tertiary: #a1a1aa;
+  --accent: #1e40af;
+  --accent-bg: #dbeafe;
+  --accent-border: #2563eb;
+  --max-width: 1100px;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
   :root {
-    --bg:        #0b0f14;
-    --bg2:       #111720;
-    --bg3:       #161d28;
-    --border:    rgba(255,255,255,0.07);
-    --border2:   rgba(255,255,255,0.12);
-    --text:      #e8edf2;
-    --text2:     #7d8fa0;
-    --text3:     #4a5a6a;
-    --accent:    #00c4a4;
-    --accent2:   rgba(0,196,164,0.12);
-    --accent3:   rgba(0,196,164,0.06);
-    --blue:      #4a9eff;
-    --blue2:     rgba(74,158,255,0.1);
-    --amber:     #f0a045;
-    --amber2:    rgba(240,160,69,0.1);
-    --purple:    #a78bfa;
-    --purple2:   rgba(167,139,250,0.1);
-    --green:     #4ade80;
-    --green2:    rgba(74,222,128,0.1);
-    --coral:     #f87171;
-    --coral2:    rgba(248,113,113,0.1);
-    --pink:      #f472b6;
-    --pink2:     rgba(244,114,182,0.1);
-    --mono:      'IBM Plex Mono', monospace;
-    --sans:      'Libre Franklin', sans-serif;
+    --bg: #0a0a0a;
+    --surface: #18181b;
+    --surface-alt: #27272a;
+    --border: #27272a;
+    --border-strong: #3f3f46;
+    --text: #fafafa;
+    --text-secondary: #a1a1aa;
+    --text-tertiary: #71717a;
+    --accent: #93c5fd;
+    --accent-bg: #1e3a8a;
+    --accent-border: #60a5fa;
   }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Helvetica Neue", Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 56px 32px 80px;
+}
+header {
+  margin-bottom: 40px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--border);
+}
+.eyebrow {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-tertiary);
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+h1 {
+  font-size: 32px;
+  font-weight: 500;
+  margin: 0 0 16px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.subtitle {
+  font-size: 18px;
+  color: var(--text-secondary);
+  max-width: 700px;
+  margin: 0;
+  line-height: 1.5;
+}
+.byline {
+  margin: 20px 0 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 400;
+  line-height: 1.5;
+}
+.byline .author {
+  font-weight: 500;
+  color: var(--text);
+}
+.intro {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 28px;
+  margin-bottom: 32px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+.intro p { margin: 0 0 12px; }
+.intro p:last-child { margin-bottom: 0; }
+.intro strong { color: var(--text); font-weight: 500; }
+.legend-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+.matrix {
+  display: grid;
+  grid-template-columns: 130px repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 32px;
+}
+.col-header {
+  padding: 14px 10px;
+  text-align: center;
+  background: var(--surface-alt);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+.col-header .stage {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.col-header .verb {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-top: 4px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.row-label {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  text-align: right;
+}
+.cell {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  min-height: 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cell:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-alt);
+}
+.cell:focus-visible {
+  outline: 2px solid var(--accent-border);
+  outline-offset: 2px;
+}
+.cell.active {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+  border-width: 1px;
+  box-shadow: 0 0 0 1px var(--accent-border);
+}
+.cell .cell-title {
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--text);
+}
+.cell .cell-body {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+.detail {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 32px;
+  min-height: 200px;
+}
+.detail-empty {
+  color: var(--text-tertiary);
+  font-size: 14px;
+  line-height: 1.6;
+  font-style: normal;
+  padding: 16px 0;
+}
+.detail-meta {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.detail h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.detail .lede {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin: 0 0 20px;
+  line-height: 1.55;
+}
+.std {
+  display: grid;
+  grid-template-columns: 180px 1fr 140px;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+  align-items: start;
+}
+.std:last-child { border-bottom: none; }
+.std-name {
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--text);
+}
+.std-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+.std-owner {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: right;
+  font-weight: 500;
+}
+footer {
+  margin-top: 60px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text-tertiary);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+footer .draft-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
 
-  html { font-size: 15px; }
-  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-weight: 300; line-height: 1.6; min-height: 100vh; }
-
-  /* ── LAYOUT ── */
-  .page { max-width: 1100px; margin: 0 auto; padding: 0 28px 80px; }
-
-  /* ── HEADER ── */
-  .site-header {
-    border-bottom: 1px solid var(--border);
-    padding: 22px 28px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    background: rgba(11,15,20,0.92);
-    backdrop-filter: blur(12px);
-    z-index: 100;
-    max-width: 100%;
+@media (max-width: 760px) {
+  .container { padding: 32px 18px 60px; }
+  h1 { font-size: 24px; }
+  .subtitle { font-size: 15px; }
+  .matrix {
+    grid-template-columns: 1fr;
+    gap: 6px;
   }
-  .wordmark { font-family: var(--mono); font-size: 13px; font-weight: 500; letter-spacing: 0.08em; color: var(--accent); }
-  .wordmark span { color: var(--text3); font-weight: 300; }
-  .header-right { display: flex; align-items: center; gap: 12px; }
-  .status-pill {
-    font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; font-weight: 500;
-    padding: 3px 10px; border-radius: 20px;
-    border: 1px solid var(--border2); color: var(--text2); background: var(--bg2);
+  .row-label { display: none; }
+  .col-header { display: none; }
+  .cell { min-height: auto; }
+  .cell::before {
+    content: attr(data-mobile-label);
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-tertiary);
+    font-weight: 500;
+    margin-bottom: 4px;
   }
-  .status-pill.design { border-color: rgba(240,160,69,0.4); color: var(--amber); background: var(--amber2); }
-
-  /* ── HERO ── */
-  .hero {
-    padding: 56px 0 44px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 52px;
+  .std {
+    grid-template-columns: 1fr;
+    gap: 4px;
   }
-  .hero-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; color: var(--text3); text-transform: uppercase; margin-bottom: 14px; }
-  .hero-title { font-family: var(--sans); font-size: 32px; font-weight: 300; color: var(--text); line-height: 1.2; margin-bottom: 6px; }
-  .hero-title strong { font-weight: 500; color: var(--accent); }
-  .hero-sub { font-size: 14px; color: var(--text2); margin-bottom: 28px; }
-  .hero-meta { display: flex; gap: 24px; flex-wrap: wrap; }
-  .meta-item { font-family: var(--mono); font-size: 11px; color: var(--text3); }
-  .meta-item span { color: var(--text2); }
+  .std-owner { text-align: left; }
+  .detail { padding: 20px; }
+}
 
-  /* ── SECTIONS ── */
-  .section { margin-bottom: 60px; }
-  .section-header { margin-bottom: 22px; display: flex; align-items: baseline; gap: 14px; }
-  .section-num { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing: 0.1em; }
-  .section-title { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text2); }
-
-  /* ── WORKFLOW TABLE ── */
-  .workflow-table { width: 100%; border-collapse: collapse; }
-  .workflow-table th {
-    font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--text3); font-weight: 400; text-align: left;
-    padding: 8px 12px; border-bottom: 1px solid var(--border2); white-space: nowrap;
+@media print {
+  :root {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-alt: #f8f8f8;
+    --border: #d0d0d0;
+    --text: #000;
+    --text-secondary: #333;
+    --text-tertiary: #666;
   }
-  .workflow-table td { padding: 11px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
-  .workflow-table tbody tr:last-child td { border-bottom: none; }
-  .workflow-table tbody tr:hover { background: var(--bg2); }
-
-  .step-num { font-family: var(--mono); font-size: 11px; color: var(--text3); white-space: nowrap; }
-  .func-pill {
-    display: inline-block; font-family: var(--mono); font-size: 10px; font-weight: 400;
-    letter-spacing: 0.05em; padding: 3px 9px; border-radius: 3px; white-space: nowrap;
-    border: 1px solid;
+  body { font-size: 11pt; }
+  .container { max-width: 100%; padding: 24px; }
+  .cell { cursor: default; }
+  .cell.active, .cell:hover { background: var(--surface); border-color: var(--border); box-shadow: none; }
+  .matrix { page-break-inside: avoid; }
+  .print-appendix { display: block !important; }
+  .print-appendix h2 {
+    font-size: 16pt;
+    font-weight: 500;
+    margin: 32px 0 16px;
+    page-break-before: always;
+    page-break-after: avoid;
   }
-  .action-main { font-size: 12px; color: var(--text); margin-bottom: 3px; }
-  .action-out  { font-family: var(--mono); font-size: 10px; color: var(--text3); }
-  .std-tag {
-    display: inline-block; font-family: var(--mono); font-size: 10px;
-    padding: 2px 7px; border-radius: 3px; white-space: nowrap; letter-spacing: 0.03em;
+  .print-appendix .cell-detail {
+    page-break-inside: avoid;
+    margin-bottom: 24px;
+    padding: 16px 20px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
   }
-  .std-alp  { background: var(--bg3); color: var(--text2); border: 1px solid var(--border2); }
-  .std-bdt  { background: var(--blue2); color: var(--blue); border: 1px solid rgba(74,158,255,0.2); }
-  .std-sec  { background: var(--green2); color: var(--green); border: 1px solid rgba(74,222,128,0.2); }
-  .std-cip  { background: var(--amber2); color: var(--amber); border: 1px solid rgba(240,160,69,0.2); margin-right: 3px; }
-
-  /* func pill colours */
-  .fc-compliance  { color: var(--amber);  border-color: rgba(240,160,69,0.3);  background: var(--amber2); }
-  .fc-identity    { color: var(--accent); border-color: rgba(0,196,164,0.3);   background: var(--accent3); }
-  .fc-oracle      { color: var(--pink);   border-color: rgba(244,114,182,0.3); background: var(--pink2); }
-  .fc-tokenize    { color: var(--accent); border-color: rgba(0,196,164,0.3);   background: var(--accent3); }
-  .fc-registry    { color: var(--blue);   border-color: rgba(74,158,255,0.3);  background: var(--blue2); }
-  .fc-settlement  { color: var(--green);  border-color: rgba(74,222,128,0.3);  background: var(--green2); }
-  .fc-custody     { color: var(--blue);   border-color: rgba(74,158,255,0.3);  background: var(--blue2); }
-  .fc-collateral  { color: var(--coral);  border-color: rgba(248,113,113,0.3); background: var(--coral2); }
-
-  /* ── DIVIDER ── */
-  .divider { border: none; border-top: 1px solid var(--border); margin: 52px 0; }
-
-  /* ── CALCULATOR ── */
-  .calc-intro { font-size: 13px; color: var(--text2); margin-bottom: 28px; line-height: 1.7; max-width: 680px; }
-
-  .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
-  @media(max-width: 640px){ .calc-grid { grid-template-columns: 1fr; } }
-
-  .calc-card {
-    background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 20px;
-  }
-  .calc-card.secondary { border-color: rgba(0,196,164,0.2); }
-
-  .calc-card-label {
-    font-family: var(--mono); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--text3); margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
-  }
-  .calc-card-label::after { content:''; flex:1; height:1px; background: var(--border); }
-
-  .input-row { margin-bottom: 14px; }
-  .input-label {
-    display: flex; justify-content: space-between; align-items: baseline;
-    font-size: 12px; color: var(--text2); margin-bottom: 5px;
-  }
-  .input-label sup { font-family: var(--mono); font-size: 9px; color: var(--text3); margin-left: 2px; }
-  .input-val { font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--text); }
-
-  input[type=range] {
-    width: 100%; -webkit-appearance: none; height: 2px;
-    background: var(--border2); border-radius: 1px; outline: none; cursor: pointer;
-  }
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%;
-    background: var(--accent); border: 2px solid var(--bg2); cursor: pointer;
-    transition: transform 0.1s;
-  }
-  input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
-  .secondary input[type=range]::-webkit-slider-thumb { background: var(--accent); }
-
-  .card-result {
-    margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border);
-    display: flex; justify-content: space-between; align-items: baseline;
-  }
-  .card-result-label { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing: 0.08em; }
-  .card-result-val { font-family: var(--mono); font-size: 22px; font-weight: 300; }
-  .primary-val { color: var(--text); }
-  .secondary-val { color: var(--accent); }
-
-  /* totals */
-  .totals-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 20px; }
-  .total-card {
-    background: var(--bg3); border: 1px solid var(--border); border-radius: 6px;
-    padding: 14px 16px; text-align: center;
-  }
-  .total-label { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing: 0.08em; margin-bottom: 6px; }
-  .total-val { font-family: var(--mono); font-size: 20px; font-weight: 400; color: var(--text); }
-  .total-card.highlight { border-color: rgba(0,196,164,0.25); background: var(--accent3); }
-  .total-card.highlight .total-val { color: var(--accent); }
-
-  /* bars */
-  .bar-section { margin-bottom: 20px; }
-  .bar-row { margin-bottom: 10px; }
-  .bar-label { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10px; color: var(--text3); margin-bottom: 5px; }
-  .bar-track { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
-  .bar-fill { height: 100%; border-radius: 2px; transition: width 0.4s ease; }
-  .bar-primary   { background: var(--text3); }
-  .bar-secondary { background: var(--accent); }
-
-  /* ── FOOTNOTES ── */
-  .fn-section { margin-top: 28px; }
-  .fn-header { font-family: var(--mono); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text3); margin-bottom: 14px; }
-  .fn-table { width: 100%; border-collapse: collapse; }
-  .fn-table td { font-size: 12px; padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--text2); line-height: 1.6; }
-  .fn-table tr:last-child td { border-bottom: none; }
-  .fn-table td:first-child { font-family: var(--mono); font-size: 10px; color: var(--text3); width: 20px; white-space: nowrap; }
-  .fn-table td:nth-child(2) { font-family: var(--mono); font-size: 11px; color: var(--text2); width: 160px; white-space: nowrap; }
-
-  .fn-disclaimer {
-    margin-top: 16px; padding: 12px 16px;
-    background: var(--amber2); border: 1px solid rgba(240,160,69,0.25); border-radius: 6px;
-    font-size: 12px; color: rgba(240,160,69,0.85); line-height: 1.6;
-  }
-
-  /* ── FOOTER ── */
-  .page-footer {
-    margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--border);
-    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
-  }
-  .footer-brand { font-family: var(--mono); font-size: 11px; color: var(--text3); }
-  .footer-brand strong { color: var(--accent); font-weight: 500; }
-  .footer-note { font-family: var(--mono); font-size: 10px; color: var(--text3); text-align: right; }
-
-  /* ── FADE IN ── */
-  @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
-  .section { animation: fadeUp 0.5s ease both; }
-  .section:nth-child(2) { animation-delay: 0.1s; }
-  .section:nth-child(3) { animation-delay: 0.2s; }
+  .print-only-hide { display: none; }
+  footer { page-break-before: avoid; }
+}
+.print-appendix { display: none; }
 </style>
 </head>
 <body>
+<div class="container">
 
-<div id="gate">
-  <div class="gate-inner">
-    <div class="gate-wordmark">FLOWRYD <span>/ DEAL ROOM</span></div>
-    <div class="gate-label">Access code</div>
-    <input class="gate-input" type="password" id="pwInput" placeholder="Enter password" onkeydown="if(event.key==='Enter')unlock()">
-    <button class="gate-btn" onclick="unlock()">ENTER</button>
-    <div class="gate-err" id="gateErr"></div>
+<header>
+  <div class="eyebrow">Working draft · ICMA PMIP NextGen · Cross-cutting Workstream III</div>
+  <h1>Architecture for Standards</h1>
+  <p class="subtitle">A navigable map of taxonomies, rules and reference patterns across the asset lifecycle. Use it to locate the standards that apply to your role and the gaps that remain to be closed through industry collaboration.</p>
+  <p class="byline"><span class="author">Liz Towler</span> · Founder, Flowryd · Executive in Residence, Global Digital Finance</p>
+</header>
+
+<div class="intro">
+  <p>Standards in primary markets are distributed across data taxonomies, legal master agreements, regulatory frameworks, operational conventions and technology specifications — owned and maintained by different communities. <strong>None is sufficient on its own; none is in conflict with the others.</strong> What the industry has lacked is a navigable map showing how they fit together.</p>
+  <p>The matrix below places the asset lifecycle on one axis (issuance, lifecycle servicing, leverage) and the standards stack on the other (data, legal, regulatory, operational, technology). Click any cell to see the taxonomies, rules and reference workflows that apply at that intersection, with explicit reference to the bodies that maintain them.</p>
+</div>
+
+<div class="legend-bar">
+  <span>Standards stack</span>
+  <span>Lifecycle stage</span>
+</div>
+
+<div class="matrix" role="grid" aria-label="Standards architecture matrix">
+  <div></div>
+  <div class="col-header" role="columnheader">
+    <div class="stage">Issuance</div>
+    <div class="verb">create</div>
+  </div>
+  <div class="col-header" role="columnheader">
+    <div class="stage">Lifecycle</div>
+    <div class="verb">service, distribute</div>
+  </div>
+  <div class="col-header" role="columnheader">
+    <div class="stage">Leverage</div>
+    <div class="verb">collateralise, finance</div>
+  </div>
+
+  <div class="row-label">Data</div>
+  <button class="cell" id="c-data-issue" data-mobile-label="Data · Issuance" onclick="showCell('data','issue')">
+    <span class="cell-title">BDT 2.0</span>
+    <span class="cell-body">PartyGroup, Issuance, Product, Events; ISO 20022 aligned</span>
+  </button>
+  <button class="cell" id="c-data-life" data-mobile-label="Data · Lifecycle" onclick="showCell('data','life')">
+    <span class="cell-title">ISO 20022, SMPG</span>
+    <span class="cell-body">Corporate actions, settlement messaging</span>
+  </button>
+  <button class="cell" id="c-data-lev" data-mobile-label="Data · Leverage" onclick="showCell('data','lev')">
+    <span class="cell-title">ISDA CDM, repo data</span>
+    <span class="cell-body">FINOS-hosted derivatives and repo schema</span>
+  </button>
+
+  <div class="row-label">Legal</div>
+  <button class="cell" id="c-legal-issue" data-mobile-label="Legal · Issuance" onclick="showCell('legal','issue')">
+    <span class="cell-title">Term sheet, prospectus</span>
+    <span class="cell-body">Governing law, ICMA primary market handbook</span>
+  </button>
+  <button class="cell" id="c-legal-life" data-mobile-label="Legal · Lifecycle" onclick="showCell('legal','life')">
+    <span class="cell-title">Trustee, paying agent</span>
+    <span class="cell-body">ICMA secondary market rules, deed structures</span>
+  </button>
+  <button class="cell" id="c-legal-lev" data-mobile-label="Legal · Leverage" onclick="showCell('legal','lev')">
+    <span class="cell-title">CSA, GMRA, GMSLA</span>
+    <span class="cell-body">Master agreements, collateral schedules</span>
+  </button>
+
+  <div class="row-label">Regulatory</div>
+  <button class="cell" id="c-reg-issue" data-mobile-label="Regulatory · Issuance" onclick="showCell('reg','issue')">
+    <span class="cell-title">Prospectus Reg, MAR, MiCA</span>
+    <span class="cell-body">Investor protection, disclosure</span>
+  </button>
+  <button class="cell" id="c-reg-life" data-mobile-label="Regulatory · Lifecycle" onclick="showCell('reg','life')">
+    <span class="cell-title">CSDR, MiFIR, T+1</span>
+    <span class="cell-body">Settlement discipline, transparency</span>
+  </button>
+  <button class="cell" id="c-reg-lev" data-mobile-label="Regulatory · Leverage" onclick="showCell('reg','lev')">
+    <span class="cell-title">EMIR, Dodd-Frank, UMR</span>
+    <span class="cell-body">Margin, reporting, capital</span>
+  </button>
+
+  <div class="row-label">Operational</div>
+  <button class="cell" id="c-op-issue" data-mobile-label="Operational · Issuance" onclick="showCell('op','issue')">
+    <span class="cell-title">PMIP NextGen</span>
+    <span class="cell-body">Bookbuilding, allocation, mandate</span>
+  </button>
+  <button class="cell" id="c-op-life" data-mobile-label="Operational · Lifecycle" onclick="showCell('op','life')">
+    <span class="cell-title">Servicing flows</span>
+    <span class="cell-body">Coupon, redemption, reconciliation</span>
+  </button>
+  <button class="cell" id="c-op-lev" data-mobile-label="Operational · Leverage" onclick="showCell('op','lev')">
+    <span class="cell-title">Margin, repo lifecycle</span>
+    <span class="cell-body">Novation, substitution, close-out</span>
+  </button>
+
+  <div class="row-label">Technology</div>
+  <button class="cell" id="c-tech-issue" data-mobile-label="Technology · Issuance" onclick="showCell('tech','issue')">
+    <span class="cell-title">CIP-56, ERC-3643</span>
+    <span class="cell-body">Token standards, BDT DLT extension</span>
+  </button>
+  <button class="cell" id="c-tech-life" data-mobile-label="Technology · Lifecycle" onclick="showCell('tech','life')">
+    <span class="cell-title">Oracles, upgradability</span>
+    <span class="cell-body">Pricing, lifecycle event triggers</span>
+  </button>
+  <button class="cell" id="c-tech-lev" data-mobile-label="Technology · Leverage" onclick="showCell('tech','lev')">
+    <span class="cell-title">Atomic DvP, on-chain collateral</span>
+    <span class="cell-body">Cross-ledger lock, automated margin</span>
+  </button>
+</div>
+
+<div class="detail" id="detail" role="region" aria-live="polite" aria-label="Cell detail panel">
+  <div class="detail-empty">
+    Click any cell above to see the taxonomies, rules and reference workflows that apply at that intersection — together with the bodies that maintain them. Standards are not layered, they are situated. The matrix tells a participant <em>where</em> to look.
   </div>
 </div>
 
-<div id="content" style="display:none">
-
-<header class="site-header">
-  <div class="wordmark">FLOWRYD <span>/ DEAL ROOM</span></div>
-  <div class="header-right">
-    <span class="status-pill">FLOW-009</span>
-    <span class="status-pill design">DESIGN</span>
+<footer>
+  <div>
+    <span class="draft-tag">Working draft</span>
+    <span style="margin-left: 12px;">Architecture for Standards · v0.1 · Cross-cutting workstream reference</span>
   </div>
-</header>
-
-<div class="page">
-
-  <div class="hero">
-    <div class="hero-label">Deal Room · Tokenised Money Market Fund</div>
-    <h1 class="hero-title">FLOW-009 — <strong>Tokenised MMF</strong></h1>
-    <p class="hero-sub">8-step issuance sequence · Canton Network · Open Interop Architecture</p>
-    <div class="hero-meta">
-      <div class="meta-item">NETWORK <span>Canton Network · Mainnet</span></div>
-      <div class="meta-item">TARGET <span>ACCELERATOR post-MVP</span></div>
-      <div class="meta-item">DOWNSTREAM <span>FLOW-001 Intraday Repo</span></div>
-      <div class="meta-item">STANDARDS <span>DAS Interop · ICMA BDT · SEC/CFTC · CIP-56</span></div>
-    </div>
+  <div style="text-align: right;">
+    <div>Liz Towler · Founder, Flowryd · Executive in Residence, Global Digital Finance</div>
+    <div style="margin-top: 4px; color: var(--text-tertiary);">For comment and refinement</div>
   </div>
+</footer>
 
-  <!-- SECTION 1: WORKFLOW -->
-  <div class="section">
-    <div class="section-header">
-      <span class="section-num">01</span>
-      <span class="section-title">Workflow · Standards Alignment</span>
-    </div>
+<!-- Print-only appendix: all detail panels expanded -->
+<div class="print-appendix">
+  <h2>Reference appendix — All standards by lifecycle and layer</h2>
+  <div id="print-content"></div>
+</div>
 
-    <div style="overflow-x:auto;">
-    <table class="workflow-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Function</th>
-          <th>Action · Output</th>
-          <th>DAS Interop (ALP)</th>
-          <th>ICMA BDT</th>
-          <th>SEC / CFTC</th>
-          <th>Canton CIPs</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="step-num">01</td>
-          <td><span class="func-pill fc-compliance">Compliance</span></td>
-          <td>
-            <div class="action-main">KYC/AML qualification of all deal parties</div>
-            <div class="action-out">→ Compliance gate pass/fail per party</div>
-          </td>
-          <td><span class="std-tag std-alp">Legal &amp; Regulatory Compliance</span></td>
-          <td><span class="std-tag std-bdt">Legal</span></td>
-          <td><span class="std-tag std-sec">All Categories</span></td>
-          <td><span class="std-tag std-cip">CIP-0103</span></td>
-        </tr>
-        <tr>
-          <td class="step-num">02</td>
-          <td><span class="func-pill fc-identity">Identity</span></td>
-          <td>
-            <div class="action-main">Issue on-chain investor credentials</div>
-            <div class="action-out">→ Credential contract per party</div>
-          </td>
-          <td><span class="std-tag std-alp">Legal &amp; Regulatory Compliance</span></td>
-          <td><span class="std-tag std-bdt">Party</span></td>
-          <td><span class="std-tag std-sec">Digital Tools</span></td>
-          <td><span class="std-tag std-cip">CIP-0103</span></td>
-        </tr>
-        <tr>
-          <td class="step-num">03</td>
-          <td><span class="func-pill fc-oracle">Oracle / Pricing</span></td>
-          <td>
-            <div class="action-main">Publish NAV and confirm fund terms on-chain</div>
-            <div class="action-out">→ On-chain price record; terms locked</div>
-          </td>
-          <td><span class="std-tag std-alp">Assets &amp; Liabilities</span></td>
-          <td><span class="std-tag std-bdt">Pricing</span></td>
-          <td><span class="std-tag std-sec">Digital Commodities</span></td>
-          <td><span class="std-tag std-cip">CIP-0103</span></td>
-        </tr>
-        <tr>
-          <td class="step-num">04</td>
-          <td><span class="func-pill fc-tokenize">Tokenize / Issuer</span></td>
-          <td>
-            <div class="action-main">Mint CIP-56 MMF units — primary issuance</div>
-            <div class="action-out">→ CIP-56 compliant MMF token contracts</div>
-          </td>
-          <td><span class="std-tag std-alp">Assets &amp; Liabilities</span></td>
-          <td><span class="std-tag std-bdt">Instrument</span></td>
-          <td><span class="std-tag std-sec">Digital Securities</span></td>
-          <td><span class="std-tag std-cip">CIP-56</span></td>
-        </tr>
-        <tr>
-          <td class="step-num">05</td>
-          <td><span class="func-pill fc-registry">Registry</span></td>
-          <td>
-            <div class="action-main">Update on-chain register — legal title established</div>
-            <div class="action-out">→ Authoritative ownership record</div>
-          </td>
-          <td><span class="std-tag std-alp">Assets &amp; Liabilities</span></td>
-          <td><span class="std-tag std-bdt">Instrument</span></td>
-          <td><span class="std-tag std-sec">Digital Securities</span></td>
-          <td><span class="std-tag std-cip">CIP-56</span></td>
-        </tr>
-        <tr>
-          <td class="step-num">06</td>
-          <td><span class="func-pill fc-settlement">Settlement Rail</span></td>
-          <td>
-            <div class="action-main">Atomic DvP — units delivered, cash leg settled</div>
-            <div class="action-out">→ Units to subscriber; cash to issuer</div>
-          </td>
-          <td><span class="std-tag std-alp">Asset Lifecycle &amp; Movement</span></td>
-          <td><span class="std-tag std-bdt">Pricing</span></td>
-          <td><span class="std-tag std-sec">Stablecoins</span></td>
-          <td><span class="std-tag std-cip">CIP-56</span><span class="std-tag std-cip">CIP-0103</span></td>
-        </tr>
-        <tr>
-          <td class="step-num">07</td>
-          <td><span class="func-pill fc-custody">Custody</span></td>
-          <td>
-            <div class="action-main">Hold MMF units — institutional custody post-settlement</div>
-            <div class="action-out">→ Custodied position; wallet updated</div>
-          </td>
-          <td><span class="std-tag std-alp">Ownership Recognition</span></td>
-          <td><span class="std-tag std-bdt">Party</span></td>
-          <td><span class="std-tag std-sec">Digital Securities</span></td>
-          <td><span class="std-tag std-cip">CIP-56</span><span class="std-tag std-cip">CIP-0103</span></td>
-        </tr>
-        <tr>
-          <td class="step-num">08</td>
-          <td><span class="func-pill fc-collateral">Collateral Agent</span></td>
-          <td>
-            <div class="action-main">Activate as eligible collateral → FLOW-001</div>
-            <div class="action-out">→ MMF units in repo pool; FLOW-001 initiated</div>
-          </td>
-          <td><span class="std-tag std-alp">Assets &amp; Liabilities</span></td>
-          <td><span class="std-tag std-bdt">Instrument</span></td>
-          <td><span class="std-tag std-sec">Digital Securities</span></td>
-          <td><span class="std-tag std-cip">CIP-56</span></td>
-        </tr>
-      </tbody>
-    </table>
-    </div>
-    <p style="margin-top:12px; font-family:var(--mono); font-size:10px; color:var(--text3);">
-      Privacy: all steps private — counterparty-visible only &nbsp;·&nbsp; Standards: DAS Interop (DTCC · Clearstream · Euroclear · BCG) · ICMA BDT v1.2 · SEC/CFTC Release 33-11412 (March 2026)
-    </p>
-  </div>
-
-  <hr class="divider">
-
-  <!-- SECTION 2: CALCULATOR -->
-  <div class="section">
-    <div class="section-header">
-      <span class="section-num">02</span>
-      <span class="section-title">Transaction Volume Model</span>
-    </div>
-
-    <p class="calc-intro">
-      Indicative transaction volume across primary issuance (FLOW-009) and secondary market activity — trading, collateral reuse, and intraday repo (FLOW-001). All inputs are illustrative; refinement required once fund details are confirmed.
-    </p>
-
-    <div class="calc-grid">
-      <!-- PRIMARY -->
-      <div class="calc-card">
-        <div class="calc-card-label">Primary market — FLOW-009 issuance</div>
-
-        <div class="input-row">
-          <div class="input-label">
-            <span>Subscriptions / day <sup>1</sup></span>
-            <span class="input-val" id="subVal">100</span>
-          </div>
-          <input type="range" min="10" max="500" value="100" step="10" oninput="calc()" id="subs">
-        </div>
-
-        <div class="input-row">
-          <div class="input-label">
-            <span>Redemptions / day <sup>2</sup></span>
-            <span class="input-val" id="redVal">40</span>
-          </div>
-          <input type="range" min="5" max="200" value="40" step="5" oninput="calc()" id="reds">
-        </div>
-
-        <div class="input-row">
-          <div class="input-label">
-            <span>Steps per transaction <sup>3</sup></span>
-            <span class="input-val" id="stepsVal">6</span>
-          </div>
-          <input type="range" min="4" max="8" value="6" step="1" oninput="calc()" id="steps">
-        </div>
-
-        <div class="card-result">
-          <span class="card-result-label">DAILY TPS</span>
-          <span class="card-result-val primary-val" id="primaryDaily">840</span>
-        </div>
-      </div>
-
-      <!-- SECONDARY -->
-      <div class="calc-card secondary">
-        <div class="calc-card-label">Secondary market — trading + collateral</div>
-
-        <div class="input-row">
-          <div class="input-label">
-            <span>Secondary trades / day <sup>4</sup></span>
-            <span class="input-val" id="tradesVal">200</span>
-          </div>
-          <input type="range" min="0" max="2000" value="200" step="50" oninput="calc()" id="trades">
-        </div>
-
-        <div class="input-row">
-          <div class="input-label">
-            <span>Collateral reuse velocity <sup>5</sup></span>
-            <span class="input-val" id="reuseVal">2x</span>
-          </div>
-          <input type="range" min="1" max="5" value="2" step="1" oninput="calc()" id="reuse">
-        </div>
-
-        <div class="input-row">
-          <div class="input-label">
-            <span>Repo settlements / day <sup>6</sup></span>
-            <span class="input-val" id="repoVal">30</span>
-          </div>
-          <input type="range" min="0" max="200" value="30" step="10" oninput="calc()" id="repo">
-        </div>
-
-        <div class="card-result">
-          <span class="card-result-label">DAILY TPS</span>
-          <span class="card-result-val secondary-val" id="secondaryDaily">530</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- TOTALS -->
-    <div class="totals-row">
-      <div class="total-card">
-        <div class="total-label">DAILY TOTAL</div>
-        <div class="total-val" id="dailyTotal">1,370</div>
-      </div>
-      <div class="total-card highlight">
-        <div class="total-label">MONTHLY TOTAL</div>
-        <div class="total-val" id="monthlyTotal">41K</div>
-      </div>
-      <div class="total-card">
-        <div class="total-label">SECONDARY / PRIMARY</div>
-        <div class="total-val" id="multiplier">0.6x</div>
-      </div>
-    </div>
-
-    <!-- BARS -->
-    <div class="bar-section">
-      <div class="bar-row">
-        <div class="bar-label"><span>Primary</span><span id="primaryPct">61%</span></div>
-        <div class="bar-track"><div class="bar-fill bar-primary" id="primaryBar" style="width:61%"></div></div>
-      </div>
-      <div class="bar-row">
-        <div class="bar-label"><span>Secondary</span><span id="secondaryPct">39%</span></div>
-        <div class="bar-track"><div class="bar-fill bar-secondary" id="secondaryBar" style="width:39%"></div></div>
-      </div>
-    </div>
-
-    <!-- FOOTNOTES -->
-    <div class="fn-section">
-      <div class="fn-header">How calculated</div>
-      <table class="fn-table">
-        <tr>
-          <td>1</td>
-          <td>Subscriptions / day</td>
-          <td>Investor purchase events. Each generates one primary issuance cycle through FLOW-009 Steps 1–7. Default 100 is illustrative — dependent on fund AUM target and distribution reach.</td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>Redemptions / day</td>
-          <td>Investor exit events. Modelled at 2 on-chain steps (registry update + cash release). Typically 30–50% of subscription volume at steady state.</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>Steps per transaction</td>
-          <td>FLOW-009 on-chain Canton transactions per subscription: compliance gate, credential check, NAV lock, token mint, registry update, DvP settlement. Range 4–8 depending on which steps generate discrete Canton ledger commits.</td>
-        </tr>
-        <tr>
-          <td>4</td>
-          <td>Secondary trades / day</td>
-          <td>Peer-to-peer MMF token transfers post-issuance. 1 TPS each (atomic Canton transfer). Volume is a function of fund liquidity profile and secondary market activation.</td>
-        </tr>
-        <tr>
-          <td>5</td>
-          <td>Collateral reuse velocity</td>
-          <td>Number of times each MMF unit is reused as collateral within a day (posted, released, reposted). Applied as a multiplier on secondary trade count. GDF TMMF sandbox Simulation 5 demonstrated 2–3x intraday reuse.</td>
-        </tr>
-        <tr>
-          <td>6</td>
-          <td>Repo settlements / day</td>
-          <td>FLOW-001 intraday repo cycles triggered from FLOW-009 Step 8 (Collateral Agent). Each repo settlement = 8 Canton transactions (FLOW-001 step count). Activated once MMF units enter the collateral pool.</td>
-        </tr>
-      </table>
-
-      <div class="fn-disclaimer">
-        Indicative model only. All inputs require refinement once fund details are confirmed — including AUM target, subscription frequency, distribution partner reach, and collateral eligibility terms. Secondary market figures assume FLOW-001 activation at Step 8.
-      </div>
-    </div>
-  </div>
-
-  <!-- FOOTER -->
-  <footer class="page-footer">
-    <div class="footer-brand"><strong>Flowryd OS</strong> · Deal Room · FLOW-009</div>
-    <div class="footer-note">Confidential · Not for distribution · Built on FlowrydOS canonical model: Functions → Flows → Accelerators → Code</div>
-  </footer>
-
-</div><!-- /page -->
+</div>
 
 <script>
-function fmt(n){
-  if(n>=1000000) return (n/1000000).toFixed(1)+'M';
-  if(n>=1000)    return (n/1000).toFixed(0)+'K';
-  return n.toLocaleString();
-}
-function calc(){
-  const subs  = +document.getElementById('subs').value;
-  const reds  = +document.getElementById('reds').value;
-  const steps = +document.getElementById('steps').value;
-  const trades= +document.getElementById('trades').value;
-  const reuse = +document.getElementById('reuse').value;
-  const repo  = +document.getElementById('repo').value;
-
-  document.getElementById('subVal').textContent   = subs;
-  document.getElementById('redVal').textContent   = reds;
-  document.getElementById('stepsVal').textContent = steps;
-  document.getElementById('tradesVal').textContent= trades;
-  document.getElementById('reuseVal').textContent = reuse+'x';
-  document.getElementById('repoVal').textContent  = repo;
-
-  const primaryD   = Math.round((subs * steps) + (reds * 2));
-  const secondaryD = Math.round(trades + (trades * reuse) + (repo * 8));
-  const daily      = primaryD + secondaryD;
-  const monthly    = daily * 30;
-
-  document.getElementById('primaryDaily').textContent   = fmt(primaryD);
-  document.getElementById('secondaryDaily').textContent = fmt(secondaryD);
-  document.getElementById('dailyTotal').textContent     = fmt(daily);
-  document.getElementById('monthlyTotal').textContent   = fmt(monthly);
-  document.getElementById('multiplier').textContent     = primaryD > 0 ? (secondaryD/primaryD).toFixed(1)+'x' : '—';
-
-  const pPct = daily > 0 ? Math.round(primaryD/daily*100) : 50;
-  const sPct = 100 - pPct;
-  document.getElementById('primaryPct').textContent  = pPct+'%';
-  document.getElementById('secondaryPct').textContent= sPct+'%';
-  document.getElementById('primaryBar').style.width  = pPct+'%';
-  document.getElementById('secondaryBar').style.width= sPct+'%';
-}
-calc();
-</script>
-</div><!-- /content -->
-
-<script>
-function unlock(){
-  const val = document.getElementById('pwInput').value;
-  if(val === 'Flowryd-Texture-Dealroom-042026!'){
-    document.getElementById('gate').classList.add('hidden');
-    document.getElementById('content').style.display = 'block';
-  } else {
-    const inp = document.getElementById('pwInput');
-    const err = document.getElementById('gateErr');
-    inp.classList.add('error');
-    err.textContent = 'Incorrect password.';
-    setTimeout(()=>{ inp.classList.remove('error'); err.textContent=''; }, 2000);
+const CELLS = {
+  'data-issue': {
+    meta: 'Data · Issuance',
+    title: 'Defining the instrument',
+    lede: 'The data layer at issuance is where the asset\u2019s identity is set. Every downstream system inherits this record. Common, machine-readable definitions at the moment of birth are the precondition for everything that follows.',
+    items: [
+      { name: 'ICMA BDT 2.0', desc: 'Bond Data Taxonomy. PartyGroup (ISO 20022 aligned), expanded PartyRoleType, SeriesTrancheClass as first-class group, new Events section, enriched DLT extension fields.', owner: 'ICMA' },
+      { name: 'ISIN, LEI, FIGI', desc: 'ISO 6166 (ISIN) for instruments, ISO 17442 (LEI) for legal entities, FIGI as supplementary open identifier. Foundational identifiers referenced inside BDT.', owner: 'ISO / ANNA / OpenFIGI' },
+      { name: 'ISO 20022', desc: 'Party reference and message model. BDT 2.0 PartyGroup follows the ISO 20022 BIC and PartyIdentification structures.', owner: 'ISO 20022 RMG' },
+      { name: 'CFI', desc: 'Classification of Financial Instruments (ISO 10962). Coarse-grained instrument typology supporting BDT.', owner: 'ISO / ANNA' }
+    ]
+  },
+  'data-life': {
+    meta: 'Data · Lifecycle',
+    title: 'Servicing the instrument',
+    lede: 'Once the asset exists, lifecycle data flows describe what happens to it: coupons, corporate actions, settlement messages, reconciliation. Consistency here is what allows custodians, paying agents and registries to coordinate without manual intervention.',
+    items: [
+      { name: 'ISO 20022 corporate actions', desc: 'Message family for coupon, redemption, conversion, default and other lifecycle events. SEEV (securities events), SETR (settlement and reconciliation).', owner: 'ISO 20022 RMG' },
+      { name: 'ICMA SMPG', desc: 'Securities Market Practice Group recommendations on event handling, message usage and reconciliation.', owner: 'ICMA SMPG' },
+      { name: 'BDT 2.0 Events section', desc: 'New in 2.0 — defines on-chain lifecycle event primitives that map to ISO 20022 corporate actions.', owner: 'ICMA' },
+      { name: 'XBRL', desc: 'Structured reporting format for issuer disclosures bound to lifecycle events.', owner: 'XBRL International' }
+    ]
+  },
+  'data-lev': {
+    meta: 'Data · Leverage',
+    title: 'Collateralising the instrument',
+    lede: 'When an asset is used as collateral or referenced in a derivative, additional data structures apply. The CDM is the common open-source domain model for derivatives and repo workflows, hosted on neutral infrastructure.',
+    items: [
+      { name: 'ISDA CDM', desc: 'Common Domain Model. Open-source machine-readable representation of derivatives and securities financing transactions and lifecycle events. Hosted by FINOS / Linux Foundation.', owner: 'ISDA / FINOS' },
+      { name: 'ICMA repo data fields', desc: 'Repo-specific data structures complementing GMRA legal terms — eligibility schedules, haircuts, substitution rules.', owner: 'ICMA ERCC' },
+      { name: 'ISLA SBL data', desc: 'Securities lending data model anchored to GMSLA.', owner: 'ISLA' }
+    ]
+  },
+  'legal-issue': {
+    meta: 'Legal · Issuance',
+    title: 'Establishing the contract',
+    lede: 'The legal layer at issuance is the term sheet and the prospectus. These documents establish what the asset is, who owes what to whom, and under which jurisdiction the obligations are enforceable. The BDT data layer is, in essence, a structured record of the term sheet.',
+    items: [
+      { name: 'Term sheet', desc: 'Core economic terms anchor — BDT fields map directly to term sheet sections.', owner: 'Issuer & syndicate' },
+      { name: 'Prospectus / offering circular', desc: 'Disclosure document, governing law, selling restrictions, risk factors.', owner: 'Issuer' },
+      { name: 'ICMA primary market handbook', desc: 'Recommended practices, agency agreements, syndication conventions.', owner: 'ICMA' },
+      { name: 'Trust deed / fiscal agency agreement', desc: 'Establishes ongoing duties of trustee or fiscal agent toward holders.', owner: 'Issuer & trustee' }
+    ]
+  },
+  'legal-life': {
+    meta: 'Legal · Lifecycle',
+    title: 'Servicing the contract',
+    lede: 'Through the life of the instrument, legal documentation governs how lifecycle events are administered, who is accountable and how disputes are resolved.',
+    items: [
+      { name: 'Trustee deed', desc: 'Ongoing duties to noteholders, default trigger logic, decision-making thresholds.', owner: 'Trustee' },
+      { name: 'Paying agent agreement', desc: 'Coupon and redemption administration, payment instructions, holder communications.', owner: 'Paying agent' },
+      { name: 'ICMA secondary market rules', desc: 'Trading conventions, settlement claims, market practice for secondary dealing.', owner: 'ICMA' }
+    ]
+  },
+  'legal-lev': {
+    meta: 'Legal · Leverage',
+    title: 'Pledging and financing the contract',
+    lede: 'When the asset is used as collateral, a separate legal layer engages — derivatives, repo, securities lending each have their own master agreements that govern the collateral relationship and enforceability in default.',
+    items: [
+      { name: 'ISDA Master Agreement + CSA', desc: 'Derivatives master agreement and Credit Support Annex. Governs collateral eligibility, margin operations, close-out netting.', owner: 'ISDA' },
+      { name: 'GMRA', desc: 'Global Master Repurchase Agreement. The ICMA-owned legal substrate for international repo.', owner: 'ICMA' },
+      { name: 'GMSLA', desc: 'Global Master Securities Lending Agreement. The ISLA-owned legal substrate for international securities lending.', owner: 'ISLA' },
+      { name: 'MRA / SIFMA Master Repo', desc: 'US repo master agreement.', owner: 'SIFMA' }
+    ]
+  },
+  'reg-issue': {
+    meta: 'Regulatory · Issuance',
+    title: 'Authorising the offer',
+    lede: 'The regulatory perimeter at issuance determines who can offer the asset to whom, with what disclosure, and under what investor protection regime. This perimeter increasingly applies to digital and tokenised offerings as it does to traditional ones.',
+    items: [
+      { name: 'EU Prospectus Regulation', desc: 'Regulation 2017/1129. Disclosure regime for public offers and admissions to trading.', owner: 'ESMA / national competent authorities' },
+      { name: 'MAR', desc: 'Market Abuse Regulation. Inside information handling and disclosure obligations from issuance onward.', owner: 'ESMA' },
+      { name: 'MiFID II / MiFIR', desc: 'Investor protection, target market assessment, product governance, costs and charges disclosure.', owner: 'ESMA' },
+      { name: 'SEC Reg S, Reg D, Rule 144A', desc: 'US offering exemptions and private placement rules for international and qualified investor offerings.', owner: 'US SEC' },
+      { name: 'MiCA', desc: 'EU Markets in Crypto-Assets Regulation. Engages where the instrument falls within crypto-asset definitions.', owner: 'ESMA' }
+    ]
+  },
+  'reg-life': {
+    meta: 'Regulatory · Lifecycle',
+    title: 'Settling and reporting',
+    lede: 'Through the life of the asset, settlement and reporting obligations apply. These obligations increasingly drive operational design choices — including the choice between traditional and on-chain settlement rails.',
+    items: [
+      { name: 'CSDR', desc: 'EU Central Securities Depositories Regulation. Settlement discipline regime, buy-in regime.', owner: 'ESMA / national CSDs' },
+      { name: 'T+1 settlement', desc: 'US T+1 since May 2024. EU T+1 transition under industry preparation. UK T+1 commitment to align.', owner: 'SEC / ESMA / FCA' },
+      { name: 'MiFIR transparency', desc: 'Pre-trade and post-trade transparency, transaction reporting obligations.', owner: 'ESMA' },
+      { name: 'CSDR Refit', desc: 'Settlement fail penalties review, mandatory buy-in suspension, ongoing review.', owner: 'ESMA' }
+    ]
+  },
+  'reg-lev': {
+    meta: 'Regulatory · Leverage',
+    title: 'Capital, margin and reporting',
+    lede: 'The leverage stage attracts the most extensive regulatory layer — capital, margin, reporting and central clearing rules. The interaction between these regimes drives demand for high-quality liquid assets and shapes which instruments are useful as collateral.',
+    items: [
+      { name: 'EMIR', desc: 'EU derivatives reporting, clearing obligation, margin obligations for uncleared OTC derivatives.', owner: 'ESMA' },
+      { name: 'Dodd-Frank Title VII', desc: 'US derivatives oversight regime under CFTC and SEC.', owner: 'CFTC / SEC' },
+      { name: 'UMR', desc: 'Uncleared Margin Rules. International framework on initial and variation margin for non-cleared derivatives.', owner: 'BCBS-IOSCO' },
+      { name: 'Basel III / IV', desc: 'Liquidity Coverage Ratio (LCR), Net Stable Funding Ratio (NSFR). Drives demand for HQLA collateral.', owner: 'BCBS' },
+      { name: 'SFTR', desc: 'EU Securities Financing Transactions Regulation. Repo, SBL and margin lending reporting.', owner: 'ESMA' }
+    ]
+  },
+  'op-issue': {
+    meta: 'Operational · Issuance',
+    title: 'Bringing the deal to market',
+    lede: 'The operational layer at issuance is the working flow through which a deal moves from mandate to settlement — currently a mix of bookbuilding platforms, email, spreadsheets and standing settlement instructions. ICMA PMIP NextGen is the principal industry workstream targeting end-to-end modernisation.',
+    items: [
+      { name: 'ICMA PMIP NextGen', desc: 'Primary Market Issuance Process working group. Standardising bookbuilding, allocation, settlement instructions and the operational interfaces between participants.', owner: 'ICMA PMIP' },
+      { name: 'Bookbuilding workflow', desc: 'Mandate, IOI capture, price discovery, allocation, deal pricing.', owner: 'Issuer / syndicate / vendor platforms' },
+      { name: 'Settlement instruction (SSI)', desc: 'Standing settlement instructions, ICSD account setup, custodian linkages.', owner: 'Custodians / ICSDs' }
+    ]
+  },
+  'op-life': {
+    meta: 'Operational · Lifecycle',
+    title: 'Running the instrument',
+    lede: 'Lifecycle servicing is the operational layer that custodians, paying agents and transfer agents work in. Better data and better workflow integration here reduce reconciliation cost and operational risk substantially.',
+    items: [
+      { name: 'Servicing flows', desc: 'Coupon calculation and payment, scheduled and partial redemption, conversion events.', owner: 'Paying agents / issuer' },
+      { name: 'Corporate action processing', desc: 'ISO 20022 CA event handling, reconciliation, claims, holder elections.', owner: 'Custodians / CSDs' },
+      { name: 'Position keeping', desc: 'Custodian, sub-custodian, transfer agent reconciliation across the holding chain.', owner: 'Custodians' }
+    ]
+  },
+  'op-lev': {
+    meta: 'Operational · Leverage',
+    title: 'Mobilising as collateral',
+    lede: 'When an asset is used to support a financing transaction, additional operational flows engage — margin, repo, securities lending, and the lifecycle events that govern them.',
+    items: [
+      { name: 'Margin call workflow', desc: 'Initial margin, variation margin, dispute resolution. ISDA SIMM where applicable for IM calculation.', owner: 'Counterparties / ISDA' },
+      { name: 'Repo lifecycle', desc: 'Open, roll, close, substitution, mark-to-market, haircut adjustment.', owner: 'Counterparties / ICMA ERCC' },
+      { name: 'Novation, give-up, close-out', desc: 'Lifecycle events on derivatives positions, including transitions to and from central clearing.', owner: 'CCPs / counterparties' }
+    ]
+  },
+  'tech-issue': {
+    meta: 'Technology · Issuance',
+    title: 'Minting the digital instrument',
+    lede: 'The technology layer at issuance is where the recording infrastructure is chosen. The choice of token standard or registry technology should not change the legal or economic nature of the instrument — it should only change how it is recorded.',
+    items: [
+      { name: 'BDT 2.0 DLT extension', desc: 'Platform type, accessibility, role, operator, MIC, token type, technical reference, smart contract address. The bridge from BDT data to ledger reality.', owner: 'ICMA' },
+      { name: 'CIP-56 (Canton)', desc: 'Canton token standard. Asset issuance and registry primitive on the Canton Network.', owner: 'Canton Foundation' },
+      { name: 'ERC-3643, ERC-1400', desc: 'Permissioned and partitioned security token standards on EVM-compatible chains.', owner: 'Ethereum / EEA' },
+      { name: 'CMTAT', desc: 'Capital Markets Technology Association token standard. Swiss-led EVM standard for regulated securities.', owner: 'CMTA' }
+    ]
+  },
+  'tech-life': {
+    meta: 'Technology · Lifecycle',
+    title: 'Operating the instrument on-chain',
+    lede: 'Through the life of a digital instrument, the technology layer must support pricing, lifecycle automation, ledger interoperability and on-chain observability — without compromising the legal and operational integrity established at issuance.',
+    items: [
+      { name: 'Oracle pricing', desc: 'NAV feeds, mark-to-market, reference rate publication on-chain.', owner: 'Oracle providers' },
+      { name: 'Smart contract upgradability', desc: 'Proxy patterns, governance-controlled upgrades, audit trails for contract changes.', owner: 'Issuer / platform operator' },
+      { name: 'Ledger interoperability', desc: 'Cross-network connectivity primitives. CIP-0103 (Canton), IBC, cross-chain messaging substrates.', owner: 'Network bodies' },
+      { name: 'Audit and observation', desc: 'On-chain observability, regulatory transaction reporting endpoints, surveillance hooks.', owner: 'Network operators / regulators' }
+    ]
+  },
+  'tech-lev': {
+    meta: 'Technology · Leverage',
+    title: 'On-chain collateralisation',
+    lede: 'The technology layer at the leverage stage delivers what the traditional collateral world has always wanted: atomic settlement, programmable margin, and the ability to mobilise collateral across networks without principal risk.',
+    items: [
+      { name: 'Atomic DvP', desc: 'Settlement primitive eliminating principal risk in collateral movement.', owner: 'Network operators' },
+      { name: 'On-chain collateral lock', desc: 'Smart contract escrow, lien registration, programmable release conditions.', owner: 'Platform operators' },
+      { name: 'Automated margin', desc: 'Threshold-triggered margin calls, programmable substitution within agreed eligibility.', owner: 'Counterparties / platform operators' },
+      { name: 'Cross-ledger lock', desc: 'Burn-mint or lock-mint patterns supporting collateral mobility across chains.', owner: 'Network bodies' }
+    ]
   }
+};
+
+let activeCell = null;
+
+function showCell(layer, stage) {
+  const key = layer + '-' + stage;
+  const cell = CELLS[key];
+  if (!cell) return;
+
+  if (activeCell) {
+    const prev = document.getElementById('c-' + activeCell);
+    if (prev) prev.classList.remove('active');
+  }
+  const current = document.getElementById('c-' + key);
+  if (current) current.classList.add('active');
+  activeCell = key;
+
+  const itemsHtml = cell.items.map(function(i) {
+    return '<div class="std">' +
+      '<div class="std-name">' + i.name + '</div>' +
+      '<div class="std-desc">' + i.desc + '</div>' +
+      '<div class="std-owner">' + i.owner + '</div>' +
+    '</div>';
+  }).join('');
+
+  const html =
+    '<div class="detail-meta">' + cell.meta + '</div>' +
+    '<h3>' + cell.title + '</h3>' +
+    (cell.lede ? '<p class="lede">' + cell.lede + '</p>' : '') +
+    itemsHtml;
+
+  document.getElementById('detail').innerHTML = html;
 }
+
+// Build print appendix on load — all cells expanded as reference
+function buildPrintAppendix() {
+  const order = [
+    'data-issue','data-life','data-lev',
+    'legal-issue','legal-life','legal-lev',
+    'reg-issue','reg-life','reg-lev',
+    'op-issue','op-life','op-lev',
+    'tech-issue','tech-life','tech-lev'
+  ];
+  const out = order.map(function(key) {
+    const c = CELLS[key];
+    const items = c.items.map(function(i) {
+      return '<div class="std">' +
+        '<div class="std-name">' + i.name + '</div>' +
+        '<div class="std-desc">' + i.desc + '</div>' +
+        '<div class="std-owner">' + i.owner + '</div>' +
+      '</div>';
+    }).join('');
+    return '<div class="cell-detail">' +
+      '<div class="detail-meta">' + c.meta + '</div>' +
+      '<h3 style="margin: 0 0 8px; font-size: 14pt; font-weight: 500;">' + c.title + '</h3>' +
+      (c.lede ? '<p class="lede" style="margin: 0 0 16px; color: var(--text-secondary); font-size: 11pt;">' + c.lede + '</p>' : '') +
+      items +
+    '</div>';
+  }).join('');
+  document.getElementById('print-content').innerHTML = out;
+}
+
+document.addEventListener('DOMContentLoaded', buildPrintAppendix);
 </script>
+
+</body>
 </html>
