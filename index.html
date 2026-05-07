@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flowryd Deal Room — FLOW-009 Tokenised MMF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Libre+Franklin:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── PASSWORD GATE ── */
+  #gate {
+    position: fixed; inset: 0; background: #0b0f14;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999; flex-direction: column; gap: 0;
+  }
+  #gate.hidden { display: none; }
+  .gate-inner { width: 100%; max-width: 360px; padding: 0 24px; }
+  .gate-wordmark { font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500; letter-spacing: 0.08em; color: #00c4a4; margin-bottom: 40px; }
+  .gate-wordmark span { color: #4a5a6a; font-weight: 300; }
+  .gate-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: #4a5a6a; margin-bottom: 10px; }
+  .gate-input {
+    width: 100%; background: #111720; border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px; padding: 11px 14px; font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px; color: #e8edf2; outline: none; letter-spacing: 0.04em;
+    transition: border-color 0.2s;
+  }
+  .gate-input:focus { border-color: rgba(0,196,164,0.4); }
+  .gate-input.error { border-color: rgba(248,113,113,0.5); }
+  .gate-btn {
+    width: 100%; margin-top: 10px; padding: 11px; background: #00c4a4;
+    border: none; border-radius: 4px; font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px; font-weight: 500; letter-spacing: 0.1em; color: #0b0f14;
+    cursor: pointer; transition: opacity 0.2s;
+  }
+  .gate-btn:hover { opacity: 0.85; }
+  .gate-err { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #f87171; margin-top: 8px; min-height: 16px; }
+
+  :root {
+    --bg:        #0b0f14;
+    --bg2:       #111720;
+    --bg3:       #161d28;
+    --border:    rgba(255,255,255,0.07);
+    --border2:   rgba(255,255,255,0.12);
+    --text:      #e8edf2;
+    --text2:     #7d8fa0;
+    --text3:     #4a5a6a;
+    --accent:    #00c4a4;
+    --accent2:   rgba(0,196,164,0.12);
+    --accent3:   rgba(0,196,164,0.06);
+    --blue:      #4a9eff;
+    --blue2:     rgba(74,158,255,0.1);
+    --amber:     #f0a045;
+    --amber2:    rgba(240,160,69,0.1);
+    --purple:    #a78bfa;
+    --purple2:   rgba(167,139,250,0.1);
+    --green:     #4ade80;
+    --green2:    rgba(74,222,128,0.1);
+    --coral:     #f87171;
+    --coral2:    rgba(248,113,113,0.1);
+    --pink:      #f472b6;
+    --pink2:     rgba(244,114,182,0.1);
+    --mono:      'IBM Plex Mono', monospace;
+    --sans:      'Libre Franklin', sans-serif;
+  }
+
+  html { font-size: 15px; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-weight: 300; line-height: 1.6; min-height: 100vh; }
+
+  /* ── LAYOUT ── */
+  .page { max-width: 1100px; margin: 0 auto; padding: 0 28px 80px; }
+
+  /* ── HEADER ── */
+  .site-header {
+    border-bottom: 1px solid var(--border);
+    padding: 22px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: rgba(11,15,20,0.92);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+    max-width: 100%;
+  }
+  .wordmark { font-family: var(--mono); font-size: 13px; font-weight: 500; letter-spacing: 0.08em; color: var(--accent); }
+  .wordmark span { color: var(--text3); font-weight: 300; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .status-pill {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; font-weight: 500;
+    padding: 3px 10px; border-radius: 20px;
+    border: 1px solid var(--border2); color: var(--text2); background: var(--bg2);
+  }
+  .status-pill.design { border-color: rgba(240,160,69,0.4); color: var(--amber); background: var(--amber2); }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 56px 0 44px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 52px;
+  }
+  .hero-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; color: var(--text3); text-transform: uppercase; margin-bottom: 14px; }
+  .hero-title { font-family: var(--sans); font-size: 32px; font-weight: 300; color: var(--text); line-height: 1.2; margin-bottom: 6px; }
+  .hero-title strong { font-weight: 500; color: var(--accent); }
+  .hero-sub { font-size: 14px; color: var(--text2); margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 24px; flex-wrap: wrap; }
+  .meta-item { font-family: var(--mono); font-size: 11px; color: var(--text3); }
+  .meta-item span { color: var(--text2); }
+
+  /* ── SECTIONS ── */
+  .section { margin-bottom: 60px; }
+  .section-header { margin-bottom: 22px; display: flex; align-items: baseline; gap: 14px; }
+  .section-num { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing: 0.1em; }
+  .section-title { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text2); }
+
+  /* ── WORKFLOW TABLE ── */
+  .workflow-table { width: 100%; border-collapse: collapse; }
+  .workflow-table th {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text3); font-weight: 400; text-align: left;
+    padding: 8px 12px; border-bottom: 1px solid var(--border2); white-space: nowrap;
+  }
+  .workflow-table td { padding: 11px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .workflow-table tbody tr:last-child td { border-bottom: none; }
+  .workflow-table tbody tr:hover { background: var(--bg2); }
+
+  .step-num { font-family: var(--mono); font-size: 11px; color: var(--text3); white-space: nowrap; }
+  .func-pill {
+    display: inline-block; font-family: var(--mono); font-size: 10px; font-weight: 400;
+    letter-spacing: 0.05em; padding: 3px 9px; border-radius: 3px; white-space: nowrap;
+    border: 1px solid;
+  }
+  .action-main { font-size: 12px; color: var(--text); margin-bottom: 3px; }
+  .action-out  { font-family: var(--mono); font-size: 10px; color: var(--text3); }
+  .std-tag {
+    display: inline-block; font-family: var(--mono); font-size: 10px;
+    padding: 2px 7px; border-radius: 3px; white-space: nowrap; letter-spacing: 0.03em;
+  }
+  .std-alp  { background: var(--bg3); color: var(--text2); border: 1px solid var(--border2); }
+  .std-bdt  { background: var(--blue2); color: var(--blue); border: 1px solid rgba(74,158,255,0.2); }
+  .std-sec  { background: var(--green2); color: var(--green); border: 1px solid rgba(74,222,128,0.2); }
+  .std-cip  { background: var(--amber2); color: var(--amber); border: 1px solid rgba(240,160,69,0.2); margin-right: 3px; }
+
+  /* func pill colours */
+  .fc-compliance  { color: var(--amber);  border-color: rgba(240,160,69,0.3);  background: var(--amber2); }
+  .fc-identity    { color: var(--accent); border-color: rgba(0,196,164,0.3);   background: var(--accent3); }
+  .fc-oracle      { color: var(--pink);   border-color: rgba(244,114,182,0.3); background: var(--pink2); }
+  .fc-tokenize    { color: var(--accent); border-color: rgba(0,196,164,0.3);   background: var(--accent3); }
+  .fc-registry    { color: var(--blue);   border-color: rgba(74,158,255,0.3);  background: var(--blue2); }
+  .fc-settlement  { color: var(--green);  border-color: rgba(74,222,128,0.3);  background: var(--green2); }
+  .fc-custody     { color: var(--blue);   border-color: rgba(74,158,255,0.3);  background: var(--blue2); }
+  .fc-collateral  { color: var(--coral);  border-color: rgba(248,113,113,0.3); background: var(--coral2); }
+
+  /* ── DIVIDER ── */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 52px 0; }
+
+  /* ── CALCULATOR ── */
+  .calc-intro { font-size: 13px; color: var(--text2); margin-bottom: 28px; line-height: 1.7; max-width: 680px; }
+
+  .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  @media(max-width: 640px){ .calc-grid { grid-template-columns: 1fr; } }
+
+  .calc-card {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 20px;
+  }
+  .calc-card.secondary { border-color: rgba(0,196,164,0.2); }
+
+  .calc-card-label {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--text3); margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
+  }
+  .calc-card-label::after { content:''; flex:1; height:1px; background: var(--border); }
+
+  .input-row { margin-bottom: 14px; }
+  .input-label {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 12px; color: var(--text2); margin-bottom: 5px;
+  }
+  .input-label sup { font-family: var(--mono); font-size: 9px; color: var(--text3); margin-left: 2px; }
+  .input-val { font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--text); }
+
+  input[type=range] {
+    width: 100%; -webkit-appearance: none; height: 2px;
+    background: var(--border2); border-radius: 1px; outline: none; cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%;
+    background: var(--accent); border: 2px solid var(--bg2); cursor: pointer;
+    transition: transform 0.1s;
+  }
+  input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+  .secondary input[type=range]::-webkit-slider-thumb { background: var(--accent); }
+
+  .card-result {
+    margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .card-result-label { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing: 0.08em; }
+  .card-result-val { font-family: var(--mono); font-size: 22px; font-weight: 300; }
+  .primary-val { color: var(--text); }
+  .secondary-val { color: var(--accent); }
+
+  /* totals */
+  .totals-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 20px; }
+  .total-card {
+    background: var(--bg3); border: 1px solid var(--border); border-radius: 6px;
+    padding: 14px 16px; text-align: center;
+  }
+  .total-label { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing: 0.08em; margin-bottom: 6px; }
+  .total-val { font-family: var(--mono); font-size: 20px; font-weight: 400; color: var(--text); }
+  .total-card.highlight { border-color: rgba(0,196,164,0.25); background: var(--accent3); }
+  .total-card.highlight .total-val { color: var(--accent); }
+
+  /* bars */
+  .bar-section { margin-bottom: 20px; }
+  .bar-row { margin-bottom: 10px; }
+  .bar-label { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10px; color: var(--text3); margin-bottom: 5px; }
+  .bar-track { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 2px; transition: width 0.4s ease; }
+  .bar-primary   { background: var(--text3); }
+  .bar-secondary { background: var(--accent); }
+
+  /* ── FOOTNOTES ── */
+  .fn-section { margin-top: 28px; }
+  .fn-header { font-family: var(--mono); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text3); margin-bottom: 14px; }
+  .fn-table { width: 100%; border-collapse: collapse; }
+  .fn-table td { font-size: 12px; padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--text2); line-height: 1.6; }
+  .fn-table tr:last-child td { border-bottom: none; }
+  .fn-table td:first-child { font-family: var(--mono); font-size: 10px; color: var(--text3); width: 20px; white-space: nowrap; }
+  .fn-table td:nth-child(2) { font-family: var(--mono); font-size: 11px; color: var(--text2); width: 160px; white-space: nowrap; }
+
+  .fn-disclaimer {
+    margin-top: 16px; padding: 12px 16px;
+    background: var(--amber2); border: 1px solid rgba(240,160,69,0.25); border-radius: 6px;
+    font-size: 12px; color: rgba(240,160,69,0.85); line-height: 1.6;
+  }
+
+  /* ── FOOTER ── */
+  .page-footer {
+    margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+  }
+  .footer-brand { font-family: var(--mono); font-size: 11px; color: var(--text3); }
+  .footer-brand strong { color: var(--accent); font-weight: 500; }
+  .footer-note { font-family: var(--mono); font-size: 10px; color: var(--text3); text-align: right; }
+
+  /* ── FADE IN ── */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+  .section { animation: fadeUp 0.5s ease both; }
+  .section:nth-child(2) { animation-delay: 0.1s; }
+  .section:nth-child(3) { animation-delay: 0.2s; }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-inner">
+    <div class="gate-wordmark">FLOWRYD <span>/ DEAL ROOM</span></div>
+    <div class="gate-label">Access code</div>
+    <input class="gate-input" type="password" id="pwInput" placeholder="Enter password" onkeydown="if(event.key==='Enter')unlock()">
+    <button class="gate-btn" onclick="unlock()">ENTER</button>
+    <div class="gate-err" id="gateErr"></div>
+  </div>
+</div>
+
+<div id="content" style="display:none">
+
+<header class="site-header">
+  <div class="wordmark">FLOWRYD <span>/ DEAL ROOM</span></div>
+  <div class="header-right">
+    <span class="status-pill">FLOW-009</span>
+    <span class="status-pill design">DESIGN</span>
+  </div>
+</header>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-label">Deal Room · Tokenised Money Market Fund</div>
+    <h1 class="hero-title">FLOW-009 — <strong>Tokenised MMF</strong></h1>
+    <p class="hero-sub">8-step issuance sequence · Canton Network · Open Interop Architecture</p>
+    <div class="hero-meta">
+      <div class="meta-item">NETWORK <span>Canton Network · Mainnet</span></div>
+      <div class="meta-item">TARGET <span>ACCELERATOR post-MVP</span></div>
+      <div class="meta-item">DOWNSTREAM <span>FLOW-001 Intraday Repo</span></div>
+      <div class="meta-item">STANDARDS <span>DAS Interop · ICMA BDT · SEC/CFTC · CIP-56</span></div>
+    </div>
+  </div>
+
+  <!-- SECTION 1: WORKFLOW -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <span class="section-title">Workflow · Standards Alignment</span>
+    </div>
+
+    <div style="overflow-x:auto;">
+    <table class="workflow-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Function</th>
+          <th>Action · Output</th>
+          <th>DAS Interop (ALP)</th>
+          <th>ICMA BDT</th>
+          <th>SEC / CFTC</th>
+          <th>Canton CIPs</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="step-num">01</td>
+          <td><span class="func-pill fc-compliance">Compliance</span></td>
+          <td>
+            <div class="action-main">KYC/AML qualification of all deal parties</div>
+            <div class="action-out">→ Compliance gate pass/fail per party</div>
+          </td>
+          <td><span class="std-tag std-alp">Legal &amp; Regulatory Compliance</span></td>
+          <td><span class="std-tag std-bdt">Legal</span></td>
+          <td><span class="std-tag std-sec">All Categories</span></td>
+          <td><span class="std-tag std-cip">CIP-0103</span></td>
+        </tr>
+        <tr>
+          <td class="step-num">02</td>
+          <td><span class="func-pill fc-identity">Identity</span></td>
+          <td>
+            <div class="action-main">Issue on-chain investor credentials</div>
+            <div class="action-out">→ Credential contract per party</div>
+          </td>
+          <td><span class="std-tag std-alp">Legal &amp; Regulatory Compliance</span></td>
+          <td><span class="std-tag std-bdt">Party</span></td>
+          <td><span class="std-tag std-sec">Digital Tools</span></td>
+          <td><span class="std-tag std-cip">CIP-0103</span></td>
+        </tr>
+        <tr>
+          <td class="step-num">03</td>
+          <td><span class="func-pill fc-oracle">Oracle / Pricing</span></td>
+          <td>
+            <div class="action-main">Publish NAV and confirm fund terms on-chain</div>
+            <div class="action-out">→ On-chain price record; terms locked</div>
+          </td>
+          <td><span class="std-tag std-alp">Assets &amp; Liabilities</span></td>
+          <td><span class="std-tag std-bdt">Pricing</span></td>
+          <td><span class="std-tag std-sec">Digital Commodities</span></td>
+          <td><span class="std-tag std-cip">CIP-0103</span></td>
+        </tr>
+        <tr>
+          <td class="step-num">04</td>
+          <td><span class="func-pill fc-tokenize">Tokenize / Issuer</span></td>
+          <td>
+            <div class="action-main">Mint CIP-56 MMF units — primary issuance</div>
+            <div class="action-out">→ CIP-56 compliant MMF token contracts</div>
+          </td>
+          <td><span class="std-tag std-alp">Assets &amp; Liabilities</span></td>
+          <td><span class="std-tag std-bdt">Instrument</span></td>
+          <td><span class="std-tag std-sec">Digital Securities</span></td>
+          <td><span class="std-tag std-cip">CIP-56</span></td>
+        </tr>
+        <tr>
+          <td class="step-num">05</td>
+          <td><span class="func-pill fc-registry">Registry</span></td>
+          <td>
+            <div class="action-main">Update on-chain register — legal title established</div>
+            <div class="action-out">→ Authoritative ownership record</div>
+          </td>
+          <td><span class="std-tag std-alp">Assets &amp; Liabilities</span></td>
+          <td><span class="std-tag std-bdt">Instrument</span></td>
+          <td><span class="std-tag std-sec">Digital Securities</span></td>
+          <td><span class="std-tag std-cip">CIP-56</span></td>
+        </tr>
+        <tr>
+          <td class="step-num">06</td>
+          <td><span class="func-pill fc-settlement">Settlement Rail</span></td>
+          <td>
+            <div class="action-main">Atomic DvP — units delivered, cash leg settled</div>
+            <div class="action-out">→ Units to subscriber; cash to issuer</div>
+          </td>
+          <td><span class="std-tag std-alp">Asset Lifecycle &amp; Movement</span></td>
+          <td><span class="std-tag std-bdt">Pricing</span></td>
+          <td><span class="std-tag std-sec">Stablecoins</span></td>
+          <td><span class="std-tag std-cip">CIP-56</span><span class="std-tag std-cip">CIP-0103</span></td>
+        </tr>
+        <tr>
+          <td class="step-num">07</td>
+          <td><span class="func-pill fc-custody">Custody</span></td>
+          <td>
+            <div class="action-main">Hold MMF units — institutional custody post-settlement</div>
+            <div class="action-out">→ Custodied position; wallet updated</div>
+          </td>
+          <td><span class="std-tag std-alp">Ownership Recognition</span></td>
+          <td><span class="std-tag std-bdt">Party</span></td>
+          <td><span class="std-tag std-sec">Digital Securities</span></td>
+          <td><span class="std-tag std-cip">CIP-56</span><span class="std-tag std-cip">CIP-0103</span></td>
+        </tr>
+        <tr>
+          <td class="step-num">08</td>
+          <td><span class="func-pill fc-collateral">Collateral Agent</span></td>
+          <td>
+            <div class="action-main">Activate as eligible collateral → FLOW-001</div>
+            <div class="action-out">→ MMF units in repo pool; FLOW-001 initiated</div>
+          </td>
+          <td><span class="std-tag std-alp">Assets &amp; Liabilities</span></td>
+          <td><span class="std-tag std-bdt">Instrument</span></td>
+          <td><span class="std-tag std-sec">Digital Securities</span></td>
+          <td><span class="std-tag std-cip">CIP-56</span></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <p style="margin-top:12px; font-family:var(--mono); font-size:10px; color:var(--text3);">
+      Privacy: all steps private — counterparty-visible only &nbsp;·&nbsp; Standards: DAS Interop (DTCC · Clearstream · Euroclear · BCG) · ICMA BDT v1.2 · SEC/CFTC Release 33-11412 (March 2026)
+    </p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 2: CALCULATOR -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <span class="section-title">Transaction Volume Model</span>
+    </div>
+
+    <p class="calc-intro">
+      Indicative transaction volume across primary issuance (FLOW-009) and secondary market activity — trading, collateral reuse, and intraday repo (FLOW-001). All inputs are illustrative; refinement required once fund details are confirmed.
+    </p>
+
+    <div class="calc-grid">
+      <!-- PRIMARY -->
+      <div class="calc-card">
+        <div class="calc-card-label">Primary market — FLOW-009 issuance</div>
+
+        <div class="input-row">
+          <div class="input-label">
+            <span>Subscriptions / day <sup>1</sup></span>
+            <span class="input-val" id="subVal">100</span>
+          </div>
+          <input type="range" min="10" max="500" value="100" step="10" oninput="calc()" id="subs">
+        </div>
+
+        <div class="input-row">
+          <div class="input-label">
+            <span>Redemptions / day <sup>2</sup></span>
+            <span class="input-val" id="redVal">40</span>
+          </div>
+          <input type="range" min="5" max="200" value="40" step="5" oninput="calc()" id="reds">
+        </div>
+
+        <div class="input-row">
+          <div class="input-label">
+            <span>Steps per transaction <sup>3</sup></span>
+            <span class="input-val" id="stepsVal">6</span>
+          </div>
+          <input type="range" min="4" max="8" value="6" step="1" oninput="calc()" id="steps">
+        </div>
+
+        <div class="card-result">
+          <span class="card-result-label">DAILY TPS</span>
+          <span class="card-result-val primary-val" id="primaryDaily">840</span>
+        </div>
+      </div>
+
+      <!-- SECONDARY -->
+      <div class="calc-card secondary">
+        <div class="calc-card-label">Secondary market — trading + collateral</div>
+
+        <div class="input-row">
+          <div class="input-label">
+            <span>Secondary trades / day <sup>4</sup></span>
+            <span class="input-val" id="tradesVal">200</span>
+          </div>
+          <input type="range" min="0" max="2000" value="200" step="50" oninput="calc()" id="trades">
+        </div>
+
+        <div class="input-row">
+          <div class="input-label">
+            <span>Collateral reuse velocity <sup>5</sup></span>
+            <span class="input-val" id="reuseVal">2x</span>
+          </div>
+          <input type="range" min="1" max="5" value="2" step="1" oninput="calc()" id="reuse">
+        </div>
+
+        <div class="input-row">
+          <div class="input-label">
+            <span>Repo settlements / day <sup>6</sup></span>
+            <span class="input-val" id="repoVal">30</span>
+          </div>
+          <input type="range" min="0" max="200" value="30" step="10" oninput="calc()" id="repo">
+        </div>
+
+        <div class="card-result">
+          <span class="card-result-label">DAILY TPS</span>
+          <span class="card-result-val secondary-val" id="secondaryDaily">530</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOTALS -->
+    <div class="totals-row">
+      <div class="total-card">
+        <div class="total-label">DAILY TOTAL</div>
+        <div class="total-val" id="dailyTotal">1,370</div>
+      </div>
+      <div class="total-card highlight">
+        <div class="total-label">MONTHLY TOTAL</div>
+        <div class="total-val" id="monthlyTotal">41K</div>
+      </div>
+      <div class="total-card">
+        <div class="total-label">SECONDARY / PRIMARY</div>
+        <div class="total-val" id="multiplier">0.6x</div>
+      </div>
+    </div>
+
+    <!-- BARS -->
+    <div class="bar-section">
+      <div class="bar-row">
+        <div class="bar-label"><span>Primary</span><span id="primaryPct">61%</span></div>
+        <div class="bar-track"><div class="bar-fill bar-primary" id="primaryBar" style="width:61%"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label"><span>Secondary</span><span id="secondaryPct">39%</span></div>
+        <div class="bar-track"><div class="bar-fill bar-secondary" id="secondaryBar" style="width:39%"></div></div>
+      </div>
+    </div>
+
+    <!-- FOOTNOTES -->
+    <div class="fn-section">
+      <div class="fn-header">How calculated</div>
+      <table class="fn-table">
+        <tr>
+          <td>1</td>
+          <td>Subscriptions / day</td>
+          <td>Investor purchase events. Each generates one primary issuance cycle through FLOW-009 Steps 1–7. Default 100 is illustrative — dependent on fund AUM target and distribution reach.</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Redemptions / day</td>
+          <td>Investor exit events. Modelled at 2 on-chain steps (registry update + cash release). Typically 30–50% of subscription volume at steady state.</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Steps per transaction</td>
+          <td>FLOW-009 on-chain Canton transactions per subscription: compliance gate, credential check, NAV lock, token mint, registry update, DvP settlement. Range 4–8 depending on which steps generate discrete Canton ledger commits.</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Secondary trades / day</td>
+          <td>Peer-to-peer MMF token transfers post-issuance. 1 TPS each (atomic Canton transfer). Volume is a function of fund liquidity profile and secondary market activation.</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Collateral reuse velocity</td>
+          <td>Number of times each MMF unit is reused as collateral within a day (posted, released, reposted). Applied as a multiplier on secondary trade count. GDF TMMF sandbox Simulation 5 demonstrated 2–3x intraday reuse.</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>Repo settlements / day</td>
+          <td>FLOW-001 intraday repo cycles triggered from FLOW-009 Step 8 (Collateral Agent). Each repo settlement = 8 Canton transactions (FLOW-001 step count). Activated once MMF units enter the collateral pool.</td>
+        </tr>
+      </table>
+
+      <div class="fn-disclaimer">
+        Indicative model only. All inputs require refinement once fund details are confirmed — including AUM target, subscription frequency, distribution partner reach, and collateral eligibility terms. Secondary market figures assume FLOW-001 activation at Step 8.
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="page-footer">
+    <div class="footer-brand"><strong>Flowryd OS</strong> · Deal Room · FLOW-009</div>
+    <div class="footer-note">Confidential · Not for distribution · Built on FlowrydOS canonical model: Functions → Flows → Accelerators → Code</div>
+  </footer>
+
+</div><!-- /page -->
+
+<script>
+function fmt(n){
+  if(n>=1000000) return (n/1000000).toFixed(1)+'M';
+  if(n>=1000)    return (n/1000).toFixed(0)+'K';
+  return n.toLocaleString();
+}
+function calc(){
+  const subs  = +document.getElementById('subs').value;
+  const reds  = +document.getElementById('reds').value;
+  const steps = +document.getElementById('steps').value;
+  const trades= +document.getElementById('trades').value;
+  const reuse = +document.getElementById('reuse').value;
+  const repo  = +document.getElementById('repo').value;
+
+  document.getElementById('subVal').textContent   = subs;
+  document.getElementById('redVal').textContent   = reds;
+  document.getElementById('stepsVal').textContent = steps;
+  document.getElementById('tradesVal').textContent= trades;
+  document.getElementById('reuseVal').textContent = reuse+'x';
+  document.getElementById('repoVal').textContent  = repo;
+
+  const primaryD   = Math.round((subs * steps) + (reds * 2));
+  const secondaryD = Math.round(trades + (trades * reuse) + (repo * 8));
+  const daily      = primaryD + secondaryD;
+  const monthly    = daily * 30;
+
+  document.getElementById('primaryDaily').textContent   = fmt(primaryD);
+  document.getElementById('secondaryDaily').textContent = fmt(secondaryD);
+  document.getElementById('dailyTotal').textContent     = fmt(daily);
+  document.getElementById('monthlyTotal').textContent   = fmt(monthly);
+  document.getElementById('multiplier').textContent     = primaryD > 0 ? (secondaryD/primaryD).toFixed(1)+'x' : '—';
+
+  const pPct = daily > 0 ? Math.round(primaryD/daily*100) : 50;
+  const sPct = 100 - pPct;
+  document.getElementById('primaryPct').textContent  = pPct+'%';
+  document.getElementById('secondaryPct').textContent= sPct+'%';
+  document.getElementById('primaryBar').style.width  = pPct+'%';
+  document.getElementById('secondaryBar').style.width= sPct+'%';
+}
+calc();
+</script>
+</div><!-- /content -->
+
+<script>
+function unlock(){
+  const val = document.getElementById('pwInput').value;
+  if(val === 'Flowryd-Texture-Dealroom-042026!'){
+    document.getElementById('gate').classList.add('hidden');
+    document.getElementById('content').style.display = 'block';
+  } else {
+    const inp = document.getElementById('pwInput');
+    const err = document.getElementById('gateErr');
+    inp.classList.add('error');
+    err.textContent = 'Incorrect password.';
+    setTimeout(()=>{ inp.classList.remove('error'); err.textContent=''; }, 2000);
+  }
+}
+</script>
+</html>
